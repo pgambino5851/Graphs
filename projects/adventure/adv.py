@@ -11,11 +11,11 @@ world = World()
 
 
 # You may uncomment the smaller graphs for development and testing purposes.
-map_file = "maps/test_line.txt"
+# map_file = "maps/test_line.txt"
 # map_file = "maps/test_cross.txt"
 # map_file = "maps/test_loop.txt"
 # map_file = "maps/test_loop_fork.txt"
-# map_file = "maps/main_maze.txt"
+map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
 room_graph=literal_eval(open(map_file, "r").read())
@@ -31,32 +31,57 @@ print(f"Player current room: {player.current_room}")
 
 # Fill this out with directions to walk
 # traversal_path = ['n', 'n']
-traversal_path = ['n', 'n']
-# graph = Graph()
-# q = Queue()
-# q.enqueue([player.current_room])
+traversal_path = []
 
-# exits = player.current_room.get_exits()
-# visited = {}
-# # print(f"Current exits: {exits}")
-# while q.size() > 0:
-#     current_path = q.dequeue()
-#     player.current_room = current_path[-1]
-#     if player.current_room not in visited:
-#        visited[player.current_room] = current_path 
+reverseDir = {'n': 's', 's': 'n', 'e': 'w', 'w': 'e'}
 
-#        exits = player.current_room.get_exits()
-#        for exit in exits:
-#            traversal_path.append(exit)
+# Keep track of path segments for traveling back
+reversePath = [None]
 
-#            q.enqueue(player.current_room.get_room_in_direction(exit))
+#Room graph I am building
+rooms = {}
 
-# while len(exits) > 0:
-#     path = exits.pop(0)
-#     print(f"Current path: {path}")
+#Dictionary to iterate through exits
+roomsdict = {}
 
+# visited = [False] * (len(roomGraph)+1)
 
+#Add room zero to graph & dictionary
+rooms[0] = player.current_room.get_exits()
+roomsdict[0] = player.current_room.get_exits()
 
+#get graph to same length as roomGraph - to ensure all rooms visited
+while len(rooms) < len(room_graph)-1:
+    if player.current_room.id not in rooms:
+        #Add room to graph
+        rooms[player.current_room.id] = player.current_room.get_exits()
+        print(f"Rooms: {rooms[player.current_room.id]}")
+        roomsdict[player.current_room.id] = player.current_room.get_exits()
+        print(f"RoomsDict: {roomsdict[player.current_room.id]}")
+        #Get last direction traveled
+        lastDirection = reversePath[-1]
+        print(f"Last Direction: {lastDirection}")
+        #Remove last exit from exits to explore - make dead ends
+        roomsdict[player.current_room.id].remove(lastDirection)
+
+    # Hit dead end room, turn around
+    while len(roomsdict[player.current_room.id]) < 1: 
+        reverse = reversePath.pop()
+        traversal_path.append(reverse)
+        player.travel(reverse)
+
+    #First available exit in room
+    exit_dir = roomsdict[player.current_room.id].pop(0)
+    #Add to traversal list
+    traversal_path.append(exit_dir)
+    # Add reverse direction to reverse path
+    reversePath.append(reverseDir[exit_dir])
+    # travel
+    player.travel(exit_dir)
+
+    #To get last room
+    if len(room_graph) - len(rooms) ==1:
+        rooms[player.current_room.id] = player.current_room.get_exits()
 
 # TRAVERSAL TEST
 visited_rooms = set()
