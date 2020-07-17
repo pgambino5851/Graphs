@@ -31,13 +31,29 @@ print(f"Player current room: {player.current_room}")
 
 # Fill this out with directions to walk
 # traversal_path = ['n', 'n']
-graph = Graph()
-traversal_path = []
-exits = player.current_room.get_exits()
-print(f"Current exits: {exits}")
-while len(exits) > 0:
-    path = exits.pop(0)
-    print(f"Current path: {path}")
+traversal_path = ['n', 'n']
+# graph = Graph()
+# q = Queue()
+# q.enqueue([player.current_room])
+
+# exits = player.current_room.get_exits()
+# visited = {}
+# # print(f"Current exits: {exits}")
+# while q.size() > 0:
+#     current_path = q.dequeue()
+#     player.current_room = current_path[-1]
+#     if player.current_room not in visited:
+#        visited[player.current_room] = current_path 
+
+#        exits = player.current_room.get_exits()
+#        for exit in exits:
+#            traversal_path.append(exit)
+
+#            q.enqueue(player.current_room.get_room_in_direction(exit))
+
+# while len(exits) > 0:
+#     path = exits.pop(0)
+#     print(f"Current path: {path}")
 
 
 
